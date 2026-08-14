@@ -129,7 +129,7 @@ no continuity correction; exact distribution used for p < 0.0001, per Table 4's 
 ## 6. Data availability
 
 The raw simulation outputs (80 runs) and aggregate CSVs used to produce all tables and
-figures in the paper are archived alongside this code at [Zenodo DOI — to insert].
+figures in the paper are archived alongside this code at https://doi.org/10.5281/zenodo.21933475.
 
 ## 7. Authors
 
