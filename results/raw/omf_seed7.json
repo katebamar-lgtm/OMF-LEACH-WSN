@@ -1,0 +1,13 @@
+{
+  "algorithm": "omf",
+  "seed": 7,
+  "elapsed_seconds": 647.6943689000327,
+  "FND": 370,
+  "HND": 1069,
+  "LND": 1625,
+  "total_packets": 83198,
+  "total_packet_loss": 1359,
+  "packet_loss_ratio": 0.016071998770060433,
+  "avg_energy_consumed_per_round": 0.024615384615384615,
+  "pareto_front_size": 1144
+}

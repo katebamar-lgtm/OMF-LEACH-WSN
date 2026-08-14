@@ -1,0 +1,13 @@
+{
+  "algorithm": "nsga",
+  "seed": 11,
+  "elapsed_seconds": 1310.9925594001543,
+  "FND": 228,
+  "HND": 1074,
+  "LND": 1773,
+  "total_packets": 80998,
+  "total_packet_loss": 1407,
+  "packet_loss_ratio": 0.0170742066622171,
+  "avg_energy_consumed_per_round": 0.022560631697687534,
+  "pareto_front_size": 71
+}

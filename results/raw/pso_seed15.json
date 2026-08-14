@@ -1,0 +1,13 @@
+{
+  "algorithm": "pso",
+  "seed": 15,
+  "elapsed_seconds": 1649.2103538000956,
+  "FND": 330,
+  "HND": 1076,
+  "LND": 1650,
+  "total_packets": 83182,
+  "total_packet_loss": 1221,
+  "packet_loss_ratio": 0.014466310439202398,
+  "avg_energy_consumed_per_round": 0.024242424242424242,
+  "pareto_front_size": 272
+}

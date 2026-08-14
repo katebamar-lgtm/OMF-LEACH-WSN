@@ -1,0 +1,13 @@
+{
+  "algorithm": "improved_leach",
+  "seed": 19,
+  "elapsed_seconds": 1.9205496001522988,
+  "FND": 314,
+  "HND": 856,
+  "LND": 1043,
+  "total_packets": 63033,
+  "total_packet_loss": 190,
+  "packet_loss_ratio": 0.0030052354364709048,
+  "avg_energy_consumed_per_round": 0.038350910834132314,
+  "pareto_front_size": 0
+}
