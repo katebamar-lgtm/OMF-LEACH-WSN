@@ -188,23 +188,7 @@ def full_round_objectives(
     ch_idx: np.ndarray,
     ds: float | None = None,
 ) -> np.ndarray:
-    """Evaluate three conflicting objectives for a candidate CH configuration.
-
-    Returns
-    -------
-    np.ndarray, shape (3,)
-        f1 : normalised round energy consumption           [0, 1]  (minimise)
-        f2 : normalised maximum intra-cluster distance     [0, 1]  (minimise)
-        f3 : per-round packet-loss ratio                   [0, 1]  (minimise)
-
-    The three objectives correspond exactly to Eq. (4)–(6) in the article.
-    Extending from 2 to 3 objectives required adding f2 here; all callers
-    (OMF, NSGA-II via _NSGA2Problem, MOPSO via _MOPSOProblem) receive and
-    forward the updated (3,) array transparently because they pass the return
-    value of this function directly to their respective Pareto-update logic.
-    The only downstream change is n_obj=3 in the pymoo Problem subclasses
-    (see nsga2.py and pso_leach.py).
-    """
+  
     alive_tmp = E > 0
     E_before = E.copy()
 
@@ -393,17 +377,7 @@ def simulate_custom_leach_round(
     round_packet_stats["cluster_head_count_total"] = int(len(ch_idx_list))
     abandoned: List[int] = []
 
-    # NOTE (performance patch): the original implementation rebuilt small NumPy
-    # arrays and called np.where/np.argsort for every single non-CH node, on
-    # every one of the ~500+ candidate evaluations per round performed by the
-    # OMF/NSGA-II/MOPSO optimizers. Profiling showed this pattern alone
-    # accounted for the majority of total runtime (np.argsort called ~928k
-    # times for just 20 rounds), because NumPy's per-call overhead dominates
-    # when operating on arrays of only a handful of elements (here, the number
-    # of cluster heads, typically ~4). Replacing it with plain Python list
-    # operations preserves the exact same behavior (ascending distance order,
-    # identical tie-breaking via Python's stable sort) while removing this
-    # overhead entirely. No simulation logic or results are altered.
+  
     for i in alive_idx:
         i = int(i)
         if i in ch_set:

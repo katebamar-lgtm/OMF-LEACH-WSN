@@ -1,3 +1,4 @@
+
 from __future__ import annotations
 
 import copy
@@ -34,29 +35,6 @@ class OMFParams:
     FS_decay: float = 0.5
     selection_mode: str = "knee_point"
 
-    # ------------------------------------------------------------------
-    # OPTIONAL / EXPERIMENTAL: parallel evaluation of NN neighbor candidates
-    # within a filter, using pymoo's StarmapParallelization runner.
-    #
-    # HONEST CAVEAT (read before enabling): after the CustomLEACH.py
-    # performance patch, a single candidate evaluation (full_round_objectives)
-    # is already fast (sub-millisecond to a few ms). Process-based
-    # parallelism has per-task dispatch/serialization overhead of a similar
-    # order of magnitude, so the expected net benefit at this granularity is
-    # small and possibly negative -- especially when batch_runner.py is
-    # already parallelizing across seeds at the outer level (nested
-    # parallelism can cause oversubscription/contention rather than speedup).
-    # This flag is OFF by default. If you want to try it, benchmark a single
-    # run with and without it on your own machine before trusting the result
-    # -- do not assume it helps without measuring.
-    # ------------------------------------------------------------------
-    # EMPIRICAL RESULT (measured during integration testing, single-core
-    # sandbox, 30 rounds): parallel_workers=2 was SLOWER than sequential
-    # (16.6s vs 9.3s) -- confirming the caveat above. Process-pool dispatch
-    # overhead outweighed the per-task compute time at this granularity.
-    # Benchmark on your own (multi-core) machine before enabling this for a
-    # real run; do not assume it will help just because more cores are
-    # available -- the bottleneck here is task granularity, not core count.
     parallel_workers: int = 0  # 0 = disabled (sequential, default, recommended)
 
 
@@ -121,13 +99,7 @@ def _evaluate_batch_sequential(omf: OMFParams, topo: Dict, E: np.ndarray, candid
 
 
 def _make_parallel_runner(n_workers: int):
-    """Build a pymoo StarmapParallelization runner backed by a process pool.
-
-    Returned alongside the pool itself so the caller can close it explicitly
-    (the pool must be created once per run and reused across rounds/
-    iterations, never recreated per evaluation -- recreating a process pool
-    thousands of times per run would itself dominate runtime).
-    """
+   
     from multiprocessing import Pool
     from pymoo.core.problem import StarmapParallelization
 
@@ -137,10 +109,7 @@ def _make_parallel_runner(n_workers: int):
 
 
 def _eval_single_arg(args_tuple):
-    """Adapter for pymoo's StarmapParallelization, which calls f(x) with a
-    single positional argument per task (it wraps each item of the task list
-    as [x] internally) rather than unpacking a tuple as *args. Must be a
-    top-level function so it can be pickled for multiprocessing."""
+    
     omf, topo, E, ch_idx = args_tuple
     return evaluate_omf_objectives(omf, topo, E, ch_idx)
 
@@ -159,11 +128,6 @@ def _evaluate_batch(
     results = runner(_eval_single_arg, [(omf, topo, E, c) for c in candidates])
     return list(results)
 
-
-# ============================================================================
-# CORE OMF SEARCH (unchanged algorithmic logic; validated Fi_obj-caching
-# performance patch preserved)
-# ============================================================================
 
 def optimize_omf_pareto_front(
     omf: OMFParams,

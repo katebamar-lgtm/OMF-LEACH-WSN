@@ -2,7 +2,7 @@
 
 Code and data supporting:
 
-> Kateb Hachemi Amar, A., Tahraoui, M. A., & Belmadani, A.
+> Kateb Hachemi Amar, A., Benbrik, N., Bouazdia, R., Tahraoui, M. A., & Belmadani, A.
 > *Optimization by Morphological Filters for Multi-Objective Cluster-Head Selection in
 > Wireless Sensor Networks.*
 
@@ -134,6 +134,8 @@ figures in the paper are archived alongside this code at https://doi.org/10.5281
 ## 7. Authors
 
 - Kateb Hachemi Amar Amar — Dept. Computer Science, Faculty of Exact Sciences and Computer Science, University of Chlef -Hassiba Benbouali- Chlef, Algeria
+- Benbrik Nihad
+- Bouazdia Rania
 - Tahraoui Mohamed Amine — Dept. Computer Science, Faculty of Exact Sciences and Computer Science, University of Chlef -Hassiba Benbouali- Chlef, Algeria
 - Belmadani Abderrahim — Dept. Computer Science, Faculty of Mathematics and Computer Science, University of Science and Technology of Oran -Mohamed Boudiaf- Oran, Algeria
 
