@@ -1,34 +1,3 @@
-"""
-MOomf.py
-========
-The genuine Optimization by Morphological Filters (OMF) metaheuristic,
-adapted to WSN cluster-head selection, as described in Section 3.6 of the
-article (filters / neighborhood-in-width / neighborhood-in-depth / random
-walk). This is NOT NSGA-II under a different name.
-
-HISTORY / IMPORTANT NOTE
--------------------------
-A previous revision of this file accidentally replaced the OMF search
-procedure with a second, differently-configured instance of NSGA-II (via
-pymoo), while keeping the "OMF" name and parameter class. That version must
-never be used to produce results reported as "OMF" in the article, since it
-was not testing the algorithm the article describes. This file restores the
-original filter/neighborhood-based OMF logic (validated in the prior
-performance audit, including the Fi_obj caching optimization), and adds:
-
-1. Support for the 3-objective formulation (energy, max intra-cluster
-   distance, packet loss) now returned by `full_round_objectives` in
-   CustomLEACH.py (Eq. 4-6 in the article) -- previously only 2 objectives
-   were wired through.
-2. Per-round Pareto front collection (`pareto_fronts_per_round`), reusing the
-   non-dominated set (ND / ND_obj) that OMF already maintains internally at
-   every round -- needed downstream to compute HV / IGD / Spread / GD.
-3. An OPTIONAL, OFF-BY-DEFAULT parallel evaluation mode for the
-   neighborhood-in-width/depth candidates, built on pymoo's
-   `StarmapParallelization` runner. See the "PARALLEL EVALUATION" section
-   below for an honest discussion of when this is (and is not) expected to
-   help.
-"""
 from __future__ import annotations
 
 import copy
