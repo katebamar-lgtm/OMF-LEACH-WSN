@@ -61,15 +61,15 @@ def _non_dominated_front(points: np.ndarray) -> np.ndarray:
         if not nd_mask[i]:
             continue
         others = points[nd_mask]
-        others_no_i = others[others is not p]   # quick ref check may fail
+        others_no_i = others[others is not p]  
         # Proper mask approach:
         idx = np.where(nd_mask)[0]
-        for j_pos, j in enumerate(idx):
+        for j in idx:
             if j == i:
-                continue
+              continue
             if np.all(points[j] <= p) and np.any(points[j] < p):
-                nd_mask[i] = False
-                break
+              nd_mask[i] = False
+              break
     return points[nd_mask]
 
 
@@ -144,8 +144,7 @@ def _compute_spread(front: np.ndarray) -> float:
     if d_mean < 1e-15:
         return 0.0
 
-    # Extreme distances: distance from boundary to first/last solution.
-    # Here we use the boundary defined by the min/max of each objective.
+   # Boundary distances are estimated from the component-wise ideal and nadir points.
     ideal = np.min(front, axis=0)
     nadir = np.max(front, axis=0)
     d_f = float(np.linalg.norm(sorted_f[0]  - ideal))

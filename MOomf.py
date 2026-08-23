@@ -22,7 +22,7 @@ N_OBJ = 3  # energy, max intra-cluster distance, packet loss (Eq. 4-6)
 
 @dataclass
 class OMFParams:
-    """Parameters of the real OMF algorithm (filters / neighbors / random walk)."""
+    """Parameters of the OMF search based on filters and neighborhood moves."""
     base: LeachParams = field(default_factory=LeachParams)
 
     NF: int = 10       # number of filters
@@ -34,7 +34,7 @@ class OMFParams:
     FS_decay: float = 0.5
     selection_mode: str = "knee_point"
 
-    parallel_workers: int = 0  # 0 = disabled (sequential, default, recommended)
+    parallel_workers: int = 0  # Optional parallel evaluation; disabled by default.
 
 
 def evaluate_omf_objectives(omf: OMFParams, topo: Dict, E: np.ndarray, ch_idx: np.ndarray) -> np.ndarray:
@@ -159,7 +159,7 @@ def optimize_omf_pareto_front(
         for i in range(len(filters)):
             Fi = filters[i]
             FS = filter_sizes[i]
-            Fi_obj = filter_objs[i]  # cached: not recomputed (see class docstring)
+            Fi_obj = filter_objs[i]  # Objective values are reused until the filter is updated.
             improved = False
 
             # Generate all NN neighbor candidates for this filter up front,

@@ -8,7 +8,7 @@ import numpy as np
 
 from ImprovedLEACH import LeachParams, generate_topology, _d0
 
-
+# First-order radio energy model parameters.
 def radio_params(params: LeachParams) -> Tuple[float, float, float, float, float]:
     e_elec = float(getattr(params, "e_elec", 50e-9))
     e_fs = float(getattr(params, "e_fs", 10e-12))
@@ -17,7 +17,7 @@ def radio_params(params: LeachParams) -> Tuple[float, float, float, float, float
     d0 = float(np.sqrt(e_fs / e_mp))
     return e_elec, e_fs, e_mp, e_da, d0
 
-
+# Transmission energy using the free-space / multipath radio model.
 def tx_energy(k_bits: int, d: float, e_elec: float, e_fs: float, e_mp: float, d0: float) -> float:
     if d < d0:
         return (e_elec * k_bits) + (e_fs * k_bits * (d ** 2))
@@ -216,12 +216,12 @@ def full_round_objectives(
     E_after = round_result[0]
     round_packet_stats = round_result[3]
 
-    # ── f1 : normalised communication energy consumed this round ──────────
+    # f1: normalized communication energy consumed during this round.
     total_energy_before = float(np.sum(E_before))
     round_energy = float(total_energy_before - np.sum(E_after))
     energy_obj = float(np.clip(round_energy / max(total_energy_before, 1e-12), 0.0, 1.0))
 
-    # ── f2 : normalised maximum intra-cluster distance (Eq. 5) ───────────
+    # f2: normalized maximum intra-cluster distance.
     # D_max(CH) = max over all clusters of the max member→CH distance.
     # Fully vectorised: extract the submatrix dist_nn[non_ch, :][:, ch_idx],
     # assign each non-CH to its nearest CH, then take the global max.
@@ -250,7 +250,7 @@ def full_round_objectives(
 
     dist_obj = float(np.clip(max_intra_dist / max(area_diag, 1e-12), 0.0, 1.0))
 
-    # ── f3 : per-round packet-loss ratio (Eq. 6) ─────────────────────────
+    # f3: packet-loss ratio during this round.
     data_generated = int(round_packet_stats.get("data_generated", n_alive))
     data_lost = int(round_packet_stats.get("data_lost", data_generated))
     packet_loss_obj = float(np.clip(data_lost / max(data_generated, 1), 0.0, 1.0))
