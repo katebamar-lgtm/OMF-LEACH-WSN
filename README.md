@@ -41,9 +41,6 @@ WSN_SIM/
 pip install numpy pymoo
 ```
 
-No other third-party dependency is required; the OMF implementation (`MOomf.py`) is
-native Python/NumPy, consistent with the implementation-asymmetry note in Section 4.1
-of the paper (pymoo's vectorized NSGA-II/MOPSO vs. OMF's non-vectorized native code).
 
 ## 3. Reproducing the paper's results
 
@@ -134,8 +131,6 @@ figures in the paper are archived alongside this code at https://doi.org/10.5281
 ## 7. Authors
 
 - Kateb Hachemi Amar Amar — Dept. Computer Science, Faculty of Exact Sciences and Computer Science, University of Chlef -Hassiba Benbouali- Chlef, Algeria
-- Benbrik Nihad
-- Bouazdia Rania
 - Tahraoui Mohamed Amine — Dept. Computer Science, Faculty of Exact Sciences and Computer Science, University of Chlef -Hassiba Benbouali- Chlef, Algeria
 - Belmadani Abderrahim — Dept. Computer Science, Faculty of Mathematics and Computer Science, University of Science and Technology of Oran -Mohamed Boudiaf- Oran, Algeria
 
@@ -144,7 +139,7 @@ figures in the paper are archived alongside this code at https://doi.org/10.5281
 If you use this code, please cite:
 
 ```
-[Full citation — to insert once accepted/published]
+[Article not yet published]
 ```
 
 ## 9. License

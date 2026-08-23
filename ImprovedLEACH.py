@@ -10,7 +10,7 @@ import numpy as np
 
 @dataclass
 class LeachParams:
-    # Network parameters from Daanoune et al. (2021)
+    
     n_nodes: int = 80
     area_w: float = 100.0
     area_h: float = 100.0
@@ -18,7 +18,7 @@ class LeachParams:
     bs_y: float = 150.0
     p: float = 0.05
 
-    # Radio energy model from the article
+    
     e0: float = 0.5
     k_bits: int = 4000
     e_elec: float = 50e-9
@@ -26,8 +26,7 @@ class LeachParams:
     e_mp: float = 0.0013e-12
     e_da: float = 5e-9
 
-    # Paper-faithful cluster-size limit:
-    # Ncl = total_nodes / desired_CHs = 80 / (0.05 * 80) = 20
+    
     ncl: int = 20
 
     # Simulation

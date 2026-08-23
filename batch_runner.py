@@ -130,19 +130,7 @@ def _compute_igd(front: np.ndarray, pf_ref: np.ndarray) -> float:
 # ---------------------------------------------------------------------------
 
 def _compute_spread(front: np.ndarray) -> float:
-    """Compute Spread (Δ) for a 2-D or 3-D Pareto front.
 
-    For a set of N non-dominated solutions, Spread is defined as:
-
-        Δ = (d_f + d_l + Σ|d_i - d̄|) / (d_f + d_l + (N-1)·d̄)
-
-    where d_i is the Euclidean distance between consecutive solutions (after
-    sorting by the first objective), d̄ is the mean of those distances, and
-    d_f, d_l are the Euclidean distances from the extreme solutions to the
-    boundary solutions of the front.  Δ = 0 means perfect uniform spread.
-
-    For fronts with fewer than 2 solutions the indicator is undefined (NaN).
-    """
     if len(front) < 2:
         return float("nan")
 
@@ -190,10 +178,7 @@ def _compute_gd(front: np.ndarray, pf_ref: np.ndarray) -> float:
 # ---------------------------------------------------------------------------
 
 def _run_one(task: Tuple[str, int, int, Path]) -> Dict:
-    """Run one (algorithm, seed) combination, persist JSON, return record.
 
-    Executed in a worker process.  Must be a top-level function for pickling.
-    """
     algo, seed, n_rounds, out_dir = task
 
     out_path    = out_dir / "raw"    / f"{algo}_seed{seed}.json"
@@ -261,7 +246,6 @@ def _run_one(task: Tuple[str, int, int, Path]) -> Dict:
 
     return record
 
-
 # ---------------------------------------------------------------------------
 # Statistics helper
 # ---------------------------------------------------------------------------
@@ -282,28 +266,12 @@ def _mean_std_ci95(values: List[float]) -> Tuple[float, float, float]:
     half_width = tcrit * std / math.sqrt(n) if n > 1 else 0.0
     return mean, std, half_width
 
-
 # ---------------------------------------------------------------------------
 # Build reference front (PF_ref) from all MO algorithm runs
 # ---------------------------------------------------------------------------
 
 def _build_reference_front(out_dir: Path, algorithms: List[str]) -> Tuple[np.ndarray, np.ndarray]:
-    """Union of all seed-level aggregate fronts → global non-dominated set,
-    plus the component-wise max over the RAW (unfiltered) point pool.
 
-    Returns (pf_ref, raw_max). `raw_max` is computed BEFORE non-domination
-    filtering, over every point from every seed/algorithm -- this is what
-    the HV reference point should be built from, not `pf_ref` alone. Using
-    only the filtered pf_ref risks a reference point that does not actually
-    dominate every point in every individual seed's front: a point removed
-    during filtering (because some other seed/algorithm's point dominated
-    it) can still have a worse raw coordinate than anything left in pf_ref,
-    silently causing that point to be dropped from its own seed's HV
-    computation later on.
-
-    This is the standard approach when the true Pareto front is not known
-    analytically.  Only MO algorithms contribute to PF_ref.
-    """
     all_points: List[np.ndarray] = []
     for algo in algorithms:
         if algo not in MO_ALGOS:
@@ -366,7 +334,6 @@ def _compute_mo_indicators(
             }
 
     return results
-
 
 # ---------------------------------------------------------------------------
 # Write summary CSVs
@@ -450,7 +417,6 @@ def _write_mo_indicators_per_seed_csv(
                     f"{vals['gd']:.6f}",
                 ])
     print(f"  Per-seed MO data → {csv_path}")
-
 
 # ---------------------------------------------------------------------------
 # Main

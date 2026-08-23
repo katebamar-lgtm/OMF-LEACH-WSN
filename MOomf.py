@@ -20,7 +20,6 @@ from solution_selection import select_solution_index
 
 N_OBJ = 3  # energy, max intra-cluster distance, packet loss (Eq. 4-6)
 
-
 @dataclass
 class OMFParams:
     """Parameters of the real OMF algorithm (filters / neighbors / random walk)."""
@@ -49,7 +48,6 @@ def evaluate_omf_objectives(omf: OMFParams, topo: Dict, E: np.ndarray, ch_idx: n
         ch_idx=ch_idx,
         ds=getattr(omf, "Ds", None),
     )
-
 
 def dominates(a: np.ndarray, b: np.ndarray) -> bool:
     return bool(np.all(a <= b) and np.any(a < b))
@@ -90,9 +88,6 @@ def neighbor_depth(current: np.ndarray, alive_idx: np.ndarray, k: int, FS: float
     return np.unique(new)[:k]
 
 
-# ============================================================================
-# OPTIONAL parallel batch evaluation (pymoo StarmapParallelization runner)
-# ============================================================================
 
 def _evaluate_batch_sequential(omf: OMFParams, topo: Dict, E: np.ndarray, candidates: List[np.ndarray]) -> List[np.ndarray]:
     return [evaluate_omf_objectives(omf, topo, E, c) for c in candidates]
@@ -121,7 +116,7 @@ def _evaluate_batch(
     candidates: List[np.ndarray],
     runner=None,
 ) -> List[np.ndarray]:
-    """Evaluate a batch of candidate CH-sets, in parallel if a runner is given."""
+
     if runner is None or len(candidates) <= 1:
         return _evaluate_batch_sequential(omf, topo, E, candidates)
 
@@ -197,7 +192,6 @@ def optimize_omf_pareto_front(
 
     return ND, np.array(ND_obj) if len(ND_obj) > 0 else np.empty((0, N_OBJ))
 
-
 def run_omf_one_round(omf, topo, E, alive, rng, runner=None):
     pareto_solutions, pareto_objs = optimize_omf_pareto_front(
         omf, topo, E, alive, rng, runner=runner
@@ -250,7 +244,7 @@ def run_omf_leach(
     # round -- we simply persist it here instead of discarding it.
     pareto_fronts_per_round: List[np.ndarray] = []
 
-    # Optional parallel evaluation runner (off by default -- see OMFParams).
+   
     runner = None
     pool = None
     if omf.parallel_workers and omf.parallel_workers > 0:
