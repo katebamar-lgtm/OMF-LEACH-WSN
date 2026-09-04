@@ -463,7 +463,6 @@ def main() -> None:
         f"({len(args.algorithms)} algorithms × {args.n_seeds} seeds) "
         f"across {args.workers} worker processes..."
     )
-    print("(Completed runs found on disk are skipped automatically.)\n")
 
     # ── Phase 1: run all (algo, seed) combinations ────────────────────────
     t0 = time.perf_counter()
