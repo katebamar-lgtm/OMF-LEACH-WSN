@@ -1,0 +1,16 @@
+{
+  "n_nodes": 150,
+  "algorithm": "nsga",
+  "algorithm_label": "NSGA-II",
+  "seed": 3,
+  "n_rounds_cap": 3000,
+  "FND": 446,
+  "HND": 1126,
+  "LND": 1710,
+  "total_packets": 162099,
+  "total_packet_loss": 3046,
+  "packet_loss_ratio": 0.01844439734778528,
+  "avg_energy_consumed_per_round": 0.043859649122807015,
+  "elapsed_seconds": 1538.0306303999969,
+  "lnd_reached_cap": false
+}

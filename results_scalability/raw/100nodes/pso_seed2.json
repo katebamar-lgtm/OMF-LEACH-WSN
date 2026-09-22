@@ -1,0 +1,16 @@
+{
+  "n_nodes": 100,
+  "algorithm": "pso",
+  "algorithm_label": "MOPSO",
+  "seed": 2,
+  "n_rounds_cap": 3000,
+  "FND": 270,
+  "HND": 1064,
+  "LND": 1485,
+  "total_packets": 104353,
+  "total_packet_loss": 1716,
+  "packet_loss_ratio": 0.016178148186557807,
+  "avg_energy_consumed_per_round": 0.03367003367003367,
+  "elapsed_seconds": 1481.7596007999964,
+  "lnd_reached_cap": false
+}

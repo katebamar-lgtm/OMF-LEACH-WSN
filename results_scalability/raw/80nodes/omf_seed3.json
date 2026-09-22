@@ -1,0 +1,17 @@
+{
+  "n_nodes": 80,
+  "algorithm": "omf",
+  "algorithm_label": "OMF",
+  "seed": 3,
+  "n_rounds_cap": 2500,
+  "FND": 313,
+  "HND": 1066,
+  "LND": 1646,
+  "total_packets": 83549,
+  "total_packet_loss": 1167,
+  "packet_loss_ratio": 0.013775437933802351,
+  "avg_energy_consumed_per_round": 0.024301336573511544,
+  "elapsed_seconds": 651.3343104000669,
+  "lnd_reached_cap": false,
+  "source": "original_results"
+}
