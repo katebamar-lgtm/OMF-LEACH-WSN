@@ -2,7 +2,7 @@
 
 Code and data supporting:
 
-> Kateb Hachemi Amar, A., Benbrik, N., Bouazdia, R., Tahraoui, M. A., & Belmadani, A.
+> Kateb Hachemi Amar, A., Tahraoui, M. A., & Belmadani, A.
 > *Optimization by Morphological Filters for Multi-Objective Cluster-Head Selection in
 > Wireless Sensor Networks.*
 
@@ -117,16 +117,12 @@ aggregates derived from them.
 | `pso_leach.py` | Section 3.5 (T_MOPSO), Table 2 |
 | `batch_runner.py` (`_compute_hv`, `_compute_igd`, `_compute_spread`, `_compute_gd`) | Section 4.3, Table 10 |
 
-Statistical analysis (Friedman/Wilcoxon tests, Tables 3, 4, 11; Benjamini–Hochberg
-correction) is not included in this repository as executable code — it was performed
-in a separate analysis script from `raw/*.json` and `mo_indicators_per_seed.csv` using
-SciPy (`scipy.stats.friedmanchisquare`, `scipy.stats.wilcoxon`, `zero_method='wilcox'`,
-no continuity correction; exact distribution used for p < 0.0001, per Table 4's note).
+Statistical analysis (Friedman/Wilcoxon tests with Benjamini–Hochberg correction, Tables 3, 4, 10; paired TOST equivalence tests, Section V-C) is reproduced by stats_analysis.py, included in this repository, from results/raw/*.json and results/mo_indicators_per_seed.csv
 
 ## 6. Data availability
 
 The raw simulation outputs (80 runs) and aggregate CSVs used to produce all tables and
-figures in the paper are archived alongside this code at https://doi.org/10.5281/zenodo.21933475.
+figures in the paper are archived alongside this code at https://doi.org/10.5281/zenodo.21933476.
 
 ## 7. Authors
 
