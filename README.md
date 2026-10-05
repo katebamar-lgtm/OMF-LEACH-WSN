@@ -1,143 +1,76 @@
-# OMF-LEACH — Simulation Code
+# OMF-LEACH — Simulation code and data
 
-Code and data supporting:
+Code and data accompanying the paper **"Optimization by Morphological Filters for Multi-Objective
+Cluster-Head Selection in Wireless Sensor Networks"** (Advances in Electrical and Computer
+Engineering). All numerical results of the paper are **simulation outputs** of the simulator in this
+repository; no field measurements were performed.
 
-> Kateb Hachemi Amar, A., Tahraoui, M. A., & Belmadani, A.
-> *Optimization by Morphological Filters for Multi-Objective Cluster-Head Selection in
-> Wireless Sensor Networks.*
+## 1. Methods compared
 
-This repository contains the Python simulator, the four cluster-head selection methods
-compared in the paper (Improved LEACH, OMF-LEACH, NSGA-II, MOPSO), and the batch runner
-used to produce all results reported in Sections 5.1–5.4 of the article.
-
----
-
-## 1. Repository structure
-
-```
-WSN_SIM/
-├── ImprovedLEACH.py       # Baseline protocol (Section 3.1) + shared network/energy/
-│                          # routing model (Section 3.2, Eqs. 3–4, d0, radio parameters)
-├── CustomLEACH.py         # Shared round simulation engine: cluster formation, multi-hop
-│                          # routing, objective evaluation f1/f2/f3 (Eqs. 4–6)
-├── MOomf.py                # Proposed OMF-LEACH algorithm (Section 3.4, Algorithm 1)
-├── nsga2.py                # NSGA-II baseline via pymoo (Table 2 parameters)
-├── pso_leach.py             # MOPSO baseline via pymoo (Table 2 parameters)
-├── solution_selection.py    # Ideal-point / knee-point compromise selection (Eq. 8)
-├── simulator.py              # Lightweight replay simulator for a saved run history
-├── batch_runner.py           # Main entry point: runs all seeds × algorithms, computes
-│                          # network-level metrics and Pareto quality indicators
-│                          # (HV, IGD, Spread, GD — Section 4.3)
-└── experiments.py            # Experiment orchestration helpers
-```
-
-## 2. Requirements
-
-- Python ≥ 3.10
-- `numpy`
-- `pymoo` (NSGA-II, MOPSO, and Hypervolume/IGD indicators)
-
-```bash
-pip install numpy pymoo
-```
-
-
-## 3. Reproducing the paper's results
-
-The full experimental campaign (4 algorithms × 20 matched seeds = 80 full-depletion
-simulations, Section 5.1) is launched with:
-
-```bash
-python batch_runner.py \
-    --algorithms improved_leach omf nsga pso \
-    --n-seeds 20 \
-    --base-seed 1 \
-    --n-rounds 2500 \
-    --hv-ref-factor 1.1 \
-    --out results
-```
-
-| Argument | Default | Meaning |
+| Label in the paper | Description | Main file |
 |---|---|---|
-| `--algorithms` | `improved_leach omf nsga pso` | Which methods to run |
-| `--n-seeds` | `20` | Number of matched seeds (Section 5.1) |
-| `--base-seed` | `1` | First seed; seeds used are `base_seed, ..., base_seed + n_seeds - 1` |
-| `--n-rounds` | `2500` | Round cap per run (network lifetime averages ≈1030–1673 rounds, well under this cap — see Table 5) |
-| `--workers` | all cores − 1 | Parallel worker processes (one per (algorithm, seed) task) |
-| `--hv-ref-factor` | `1.1` | Nadir-point multiplier for the Hypervolume reference point (Section 4.3: "inflated by 10% per dimension") |
-| `--out` | `results` | Output directory |
+| Improved LEACH | Closed-form energy-aware threshold, fixed N_cl = 20, greedy multi-hop routing | `ImprovedLEACH.py` |
+| OMF (proposed) | Multi-objective OMF, 3 objectives (energy, max CH-to-member distance, packet loss) | `MOomf.py` |
+| NSGA-II | pymoo NSGA-II, same objectives, same budget (600 evaluations/call) | `nsga2.py` |
+| MOPSO | pymoo MOPSO-CD, same objectives, same budget | `pso_leach.py` |
+| Random CH (ref.) | Random selection, same simulator, K rule, Dijkstra routing | `reference_heuristics.py` |
+| Top-K energy (ref.) | Top-K residual-energy selection, same simulator | `reference_heuristics.py` |
 
-All algorithm-specific parameters (NF/NN/IT/R for OMF; population/generations/Pc/Pm for
-NSGA-II; swarm/iterations/ω/c1/c2/repository for MOPSO — Table 2) are set as dataclass
-defaults in `MOomf.py`, `nsga2.py`, and `pso_leach.py` respectively, and match the paper
-exactly. Radio/network parameters (Table 1) are set as defaults in `ImprovedLEACH.py`'s
-`LeachParams` dataclass.
+The three metaheuristics and the two reference heuristics share the simulator, the K rule
+(K = round(P·N_a)), minimum-energy Dijkstra inter-cluster routing and N_cl = [N_a/K].
+Improved LEACH differs in routing and cluster size (comparisons with it are indicative only).
 
-Runtime note: the full campaign takes roughly 1 hour on a modern multi-core machine
-(dominated by NSGA-II/MOPSO's per-round re-optimization, consistent with Table 8's
-per-run execution times of ~13–27 minutes per seed, ×20 seeds, ×3 metaheuristics).
-Results are cached: re-running `batch_runner.py` skips any `(algorithm, seed)` pair
-whose output files already exist in `--out`.
+## 2. Campaigns and mapping to the paper
 
-## 4. Output files
+| Campaign | Command | Output | Paper |
+|---|---|---|---|
+| Main campaign: Improved LEACH, NSGA-II, MOPSO, OMF — 20 seeds, 80 nodes, run until depletion | `python batch_runner.py --n-seeds 20 --out results` | `results/` | Tables VI–VIII, X (V-B, V-D) |
+| Reference heuristics: Random CH, Top-K — same 20 seeds | `python reference_heuristics.py --seeds 20 --out results_reference` | `reference_heuristics_raw.csv`, `reference_heuristics_summary.csv` | Rows "ref." of Tables VI and VIII, Section VI |
+| Statistics (Friedman, BH-FDR, Wilcoxon, TOST, indicators) | `python stats_analysis.py` | console / `--save` | Tables IV, V, XI; Sections V-A, V-B |
+| Per-call timing, 80 nodes, N_a ∈ {80, 60, 40, 20}, 10 repetitions, interleaved | `python bench_call_timing.py --reps 10 --out results_timing_80` | `call_timing_raw.csv` | Table IX, Fig. 4 |
+| Scalability (100 and 150 nodes, seeds 1–10) | `python scalability_runner.py --nodes 80 100 150 --n-seeds 10 --out results_scalability` | `scalability_per_run.csv`, `scalability_summary.csv` | Table XII, Section V-E |
+| Timing at larger sizes | `python bench_call_timing.py --n-nodes 100 --out results_timing_100` (and 150 nodes with `--area-w 200 --area-h 200 --bs-x 100 --bs-y 300`) | `results_timing_100/`, `results_timing_150/` | Section V-E |
+| Proof of Table VIII | `TableVIII_per_seed_proof.csv` | — | Section V-B |
 
-Running `batch_runner.py` populates `--out` with:
+Run `python check_environment.py` first (requires Python 3, numpy, scipy, pymoo).
 
-```
-results/
-├── raw/<algorithm>_seed<N>.json         # Per-run scalar metrics (FND, HND, LND,
-│                                        # packets, energy, elapsed_seconds, ...)
-├── pareto/<algorithm>_seed<N>_pf.npy     # Aggregate non-dominated front for that
-│                                        # run: array of shape (n_points, 3) with
-│                                        # columns [f1_energy, f2_distance, f3_loss]
-├── pf_ref.npy                            # Global reference front: non-dominated
-│                                        # union of all OMF/NSGA-II/MOPSO solutions
-│                                        # across all seeds (Section 4.3)
-├── summary.csv                           # Network-level metrics, mean ± 95% CI
-│                                        # per algorithm (feeds Tables 5–8)
-├── mo_indicators.csv                     # HV/IGD/Spread/GD, mean ± 95% CI per
-│                                        # algorithm (feeds Table 10)
-└── mo_indicators_per_seed.csv            # Same, per seed (used for the matched-seed
-                                         # Friedman/Wilcoxon tests, Tables 3, 4, 11)
-```
+## 3. Network and parameters
 
-`raw/*.json` and `mo_indicators_per_seed.csv` are the ground truth for every
-statistical test in the paper; `summary.csv` and `mo_indicators.csv` are convenience
-aggregates derived from them.
+80 nodes (100 × 100 m), base station at (50, 150), initial energy 0.5 J per node, 4000-bit packets,
+E_elec = 50 nJ/bit, ε_fs = 10 pJ/bit/m², ε_mp = 0.0013 pJ/bit/m⁴, E_DA = 5 nJ/bit/signal,
+d₀ = 87.7 m, P = 0.05. NSGA-II and MOPSO: population/swarm 30 × 20 iterations (600 evaluations);
+OMF: NF = 10, NN = 6, IT = 10, R = 0.7, FS_init = 0.5, FS_decay = 0.5, ε = 10⁻³
+(10 initial + 600 = 610 evaluations per call). See Tables II–III of the paper.
 
-## 5. Mapping code → paper sections
+## 4. Data dictionary (important)
 
-| Code | Paper |
-|---|---|
-| `ImprovedLEACH.py` (`LeachParams`, `_tx_energy`, `_rx_energy`, `_agg_energy`, `_d0`) | Section 3.2, Eqs. 3, Table 1 |
-| `CustomLEACH.py` (objective evaluation) | Section 3.3, Eqs. 4–6 |
-| `MOomf.py` (`OMFParams`, main loop) | Section 3.4, Algorithm 1, Table 2 |
-| `solution_selection.py` (`select_solution_index`, mode `"knee_point"`) | Eq. 8 |
-| `nsga2.py` | Section 3.5 (T_NSGA-II), Table 2 |
-| `pso_leach.py` | Section 3.5 (T_MOPSO), Table 2 |
-| `batch_runner.py` (`_compute_hv`, `_compute_igd`, `_compute_spread`, `_compute_gd`) | Section 4.3, Table 10 |
+* `FND`, `HND`, `LND`: rounds at which the first / half / last node dies.
+* `total_packet_loss`: packets lost over the whole run.
+* **`total_packets`: packets successfully delivered to the base station.**
+  *Packets generated* (Table VII) = `total_packets` + `total_packet_loss`.
+* `packet_loss_ratio`: `total_packet_loss` / (`total_packets` + `total_packet_loss`).
+* `avg_energy_consumed_per_round`: total consumed energy / number of rounds. Because every run is
+  continued until full depletion, `avg_energy_consumed_per_round × LND = N × 0.5 J` (40 J at 80 nodes,
+  50 J at 100 nodes, 75 J at 150 nodes) — see `TableVIII_per_seed_proof.csv`.
+* `elapsed_seconds`: wall-clock time of a complete run (separate, non-interleaved campaigns; not used
+  for ranking — see Table IX / `call_timing_raw.csv` for the controlled per-call benchmark).
 
-Statistical analysis (Friedman/Wilcoxon tests with Benjamini–Hochberg correction, Tables 3, 4, 10; paired TOST equivalence tests, Section V-C) is reproduced by stats_analysis.py, included in this repository, from results/raw/*.json and results/mo_indicators_per_seed.csv
+## 5. Reproducibility notes
 
-## 6. Data availability
+* Seeds 1–20 define node placement and channel realization and are shared by all methods
+  (matched design). Scalability uses seeds 1–10.
+* Per-call evaluations: OMF 610, NSGA-II 600, MOPSO 630 (21 evaluations of the 30-particle swarm).
+* The Pareto fronts used for HV / IGD / GD / Spread are stored per seed in `mo_indicators_per_seed.csv`.
+  OMF's archive keeps all non-dominated candidates evaluated during the search, whereas NSGA-II and
+  MOPSO report their final population / repository (see Section IV-C of the paper).
 
-The raw simulation outputs (80 runs) and aggregate CSVs used to produce all tables and
-figures in the paper are archived alongside this code at https://doi.org/10.5281/zenodo.21933476.
+## 6. Supplementary robustness check (not used in the paper's tables)
 
-## 7. Authors
+`ablation_selection_pool.py` re-runs NSGA-II with (i) the CH set deployed exactly as evaluated
+(`--variant exact`) and (ii) a non-dominated archive of all evaluated candidates (`--variant archive`),
+to test whether the selection pool size or the random repair in `decode_particle` influences FND.
+Results are in `results_ablation/`.
 
-- Kateb Hachemi Amar Amar — Dept. Computer Science, Faculty of Exact Sciences and Computer Science, University of Chlef -Hassiba Benbouali- Chlef, Algeria
-- Tahraoui Mohamed Amine — Dept. Computer Science, Faculty of Exact Sciences and Computer Science, University of Chlef -Hassiba Benbouali- Chlef, Algeria
-- Belmadani Abderrahim — Dept. Computer Science, Faculty of Mathematics and Computer Science, University of Science and Technology of Oran -Mohamed Boudiaf- Oran, Algeria
+## 7. Citation / license
 
-## 8. Citation
-
-If you use this code, please cite:
-
-```
-[Article not yet published]
-```
-
-## 9. License
-
-This project is licensed under the MIT License — see the [LICENSE](LICENSE) file for details.
+Please cite the paper and the Zenodo record (doi: 10.5281/zenodo.21933476).
