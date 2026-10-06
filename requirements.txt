@@ -1,0 +1,5 @@
+# Python >= 3.9; pymoo >= 0.6 API (pymoo.algorithms.moo.nsga2 / mopso_cd)
+numpy>=1.24
+scipy>=1.10
+pymoo>=0.6.0
+matplotlib>=3.7   # only for make_figures.py
