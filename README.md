@@ -36,7 +36,7 @@ Improved LEACH differs in routing and cluster size (comparisons with it are indi
 
 Source files: `ImprovedLEACH.py` (baseline, `LeachParams`), `CustomLEACH.py` (topology, round simulation, `decode_particle`), `MOomf.py` (OMF), `nsga2.py` and `pso_leach.py` (pymoo-based baselines), `solution_selection.py` (ideal-point selection, Eq. 8), `stats_analysis.py`, `batch_runner.py`, `scalability_runner.py`, `bench_call_timing.py`, `reference_heuristics.py`. Auxiliary: `experiments.py` (programmatic wrapper around the four runners) and `simulator.py` (replay of a saved run history).
 
-Install with `pip install -r requirements.txt`, then run `python check_environment.py`. NSGA-II and MOPSO results depend on the pymoo/numpy versions (they change the random streams): use the locked versions to reproduce the paper bit-for-bit. Improved LEACH and OMF do not use pymoo.
+Install with `pip install -r requirements.txt`, then run `python check_environment.py`. `requirements-lock.txt` lists the exact library versions used to produce the paper's numbers. NSGA-II and MOPSO results depend on the pymoo/numpy versions (they change the random streams): use the locked versions to reproduce the paper bit-for-bit. Improved LEACH and OMF do not use pymoo.
 
 ## 3. Network and parameters
 
@@ -61,7 +61,7 @@ OMF: NF = 10, NN = 6, IT = 10, R = 0.7, FS_init = 0.5, FS_decay = 0.5, ε = 10�
 
 ## 5. Reproducibility notes
 
-* Seeds 1–20 define node placement and channel realization and are shared by all methods
+* Seeds 1–20 define node placement that are shared by all methods
   (matched design). Scalability uses seeds 1–10.
 * Per-call evaluations: OMF 610, NSGA-II 600, MOPSO 630 (21 evaluations of the 30-particle swarm).
 * The Pareto fronts used for HV / IGD / GD / Spread are stored per seed in `mo_indicators_per_seed.csv`.
