@@ -1,0 +1,25 @@
+cff-version: 1.1.0
+message: "If you use this software, please cite the associated manuscript and the version of the code you used. 
+Update this metadata when publication details or a DOI become available."
+type: software
+title: "Optimization by Morphological Filters for Multi-Objective Cluster-Head Selection in Wireless Sensor Networks"
+version: 1.1.0
+license: MIT
+date-released: 2026-10-23
+authors:
+  - family-names: "Kateb Hachemi Amar"
+    given-names: "Amar"
+    orcid: "https://orcid.org/0009-0007-4320-415X"
+  - family-names: "Tahraoui"
+    given-names: "Mohammed Amine"
+    orcid: "https://orcid.org/0009-0004-6491-7827"
+  - family-names: "Belmadani"
+    given-names: "Abderrahim"
+    orcid: "https://orcid.org/0009-0000-5600-7963"
+abstract: >-
+  EACH-based Cluster-Head (CH) selection relies on limited probabilistic rules. 
+  This work models CH selection in an Improved-LEACH architecture as a three-objective problem 
+  (energy, intra-cluster distance, packet loss) and adapts the lightweight Optimization by Morphological Filters 
+  (OMF) metaheuristic for the first time. OMF-LEACH outperforms MOPSO and matches NSGA-II in network lifetime, 
+  while reducing computation time by 11–28%. This demonstrates OMF's efficiency for multi-objective optimization 
+  in resource-constrained wireless sensor networks.
